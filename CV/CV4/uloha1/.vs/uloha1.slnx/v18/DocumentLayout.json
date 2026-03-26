@@ -1,0 +1,86 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|c:\\users\\toso\\dev\\c#\\cv4\\uloha1\\uloha1\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|solutionrelative:uloha1\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|c:\\users\\toso\\dev\\c#\\cv4\\uloha1\\uloha1\\personwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|solutionrelative:uloha1\\personwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|c:\\users\\toso\\dev\\c#\\cv4\\uloha1\\uloha1\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|solutionrelative:uloha1\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|c:\\users\\toso\\dev\\c#\\cv4\\uloha1\\uloha1\\personwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{70293FF5-4530-43FA-B661-31492B0ECE69}|uloha1\\uloha1.csproj|solutionrelative:uloha1\\personwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PersonWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\PersonWindow.xaml",
+              "RelativeDocumentMoniker": "uloha1\\PersonWindow.xaml",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\PersonWindow.xaml",
+              "RelativeToolTip": "uloha1\\PersonWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-14T19:29:44.584Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "uloha1\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\MainWindow.xaml.cs",
+              "RelativeToolTip": "uloha1\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-14T18:13:50.863Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PersonWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\PersonWindow.xaml.cs",
+              "RelativeDocumentMoniker": "uloha1\\PersonWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\PersonWindow.xaml.cs",
+              "RelativeToolTip": "uloha1\\PersonWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-14T19:48:11.693Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "uloha1\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\uloha1\\uloha1\\MainWindow.xaml",
+              "RelativeToolTip": "uloha1\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-14T18:13:51.718Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

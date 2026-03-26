@@ -1,0 +1,38 @@
+﻿<Window x:Class="uloha1.PersonWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:uloha1"
+        mc:Ignorable="d"
+        Title="Person" Height="240" Width="300" WindowStartupLocation="CenterOwner">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Content="First Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5"/>
+        <TextBox x:Name="TxtFirstName" Grid.Row="0" Grid.Column="1" Height="25" Margin="0,5"/>
+
+        <Label Content="Last Name:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5"/>
+        <TextBox x:Name="TxtLastName" Grid.Row="1" Grid.Column="1" Height="25" Margin="0,5"/>
+
+        <Label Content="Birthdate:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5"/>
+        <DatePicker x:Name="DateBirthday" Grid.Row="2" Grid.Column="1" Height="25" Margin="0,5"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,15,10,20">
+            <Button Content="OK" Width="90" Height="30" Margin="0,0,10,0" Click="OkClick" IsDefault="True"/>
+            <Button Content="Cancel" Width="90" Height="30" Click="CancelClick" IsCancel="True"/>
+        </StackPanel>
+
+
+    </Grid>
+</Window>

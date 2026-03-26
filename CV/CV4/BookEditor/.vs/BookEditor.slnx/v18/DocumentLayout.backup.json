@@ -1,0 +1,85 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|c:\\users\\toso\\dev\\c#\\cv4\\bookeditor\\bookeditor\\newbook.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|solutionrelative:bookeditor\\newbook.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|c:\\users\\toso\\dev\\c#\\cv4\\bookeditor\\bookeditor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|solutionrelative:bookeditor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|c:\\users\\toso\\dev\\c#\\cv4\\bookeditor\\bookeditor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|solutionrelative:bookeditor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|c:\\users\\toso\\dev\\c#\\cv4\\bookeditor\\bookeditor\\newbook.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2FB1E4D9-9119-27AE-582C-0A3D33FE1E36}|BookEditor\\BookEditor.csproj|solutionrelative:bookeditor\\newbook.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "BookEditor\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\MainWindow.xaml",
+              "RelativeToolTip": "BookEditor\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-14T20:43:47.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "BookEditor\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\MainWindow.xaml.cs",
+              "RelativeToolTip": "BookEditor\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-14T20:43:46.83Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "NewBook.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\NewBook.xaml.cs",
+              "RelativeDocumentMoniker": "BookEditor\\NewBook.xaml.cs",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\NewBook.xaml.cs",
+              "RelativeToolTip": "BookEditor\\NewBook.xaml.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAcwCkAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-16T02:42:37.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "NewBook.xaml",
+              "DocumentMoniker": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\NewBook.xaml",
+              "RelativeDocumentMoniker": "BookEditor\\NewBook.xaml",
+              "ToolTip": "C:\\Users\\Toso\\Dev\\C#\\CV4\\BookEditor\\BookEditor\\NewBook.xaml",
+              "RelativeToolTip": "BookEditor\\NewBook.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-16T01:58:21.369Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

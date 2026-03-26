@@ -1,0 +1,62 @@
+﻿<Window x:Class="uloha1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:uloha1"
+        mc:Ignorable="d"
+        Title="My First WPF App" Height="450" Width="800">
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Margin="10">
+            <Button HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Width="100"
+                Height="30"
+                Margin="5, 5, 0, 0"
+                Click="ButtonClick">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="https://emojiisland.com/cdn/shop/products/16_grande.png?v=1571606116"
+                   Width="24"
+                   Height="24"
+                   Margin="0,0,2,0"
+                />
+                    <TextBlock Text="Show Hello"
+                       VerticalAlignment="Center"
+                       FontSize="13"
+                />
+                </StackPanel>
+            </Button>
+
+
+            <Button Content="Change background color"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="5, 5, 0, 0"
+                Click="ChangeColorClick"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ListBox x:Name="PeopleList" Grid.Column="0" Margin="0,0,10,0"/>
+
+            <Button Content="Add..." 
+                    Grid.Column="1" 
+                    VerticalAlignment="Top" 
+                    Width="75" 
+                    Height="30" 
+                    Click="AddPersonClick"/>
+        </Grid>
+        
+        
+    </Grid>
+</Window>

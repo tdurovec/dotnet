@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BookEditor/BookEditor.csproj" />
+  <Project Path="BookRecords.Library/BookRecords.CommonLibrary.csproj" />
+</Solution>
