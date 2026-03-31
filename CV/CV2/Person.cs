@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Numerics;
 
 namespace CV2
 {
@@ -8,15 +6,7 @@ namespace CV2
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime? Birthday 
-        { 
-            get
-            {
-                if (field == null) field = DateTime.Today;
-                return field;
-            }
-        }
-
+        public DateTime BirthDate { get; set; }
         public Gender Gender { get; set; }
 
         public string FullName => $"{FirstName} {LastName}".Trim();
@@ -26,32 +16,57 @@ namespace CV2
             get
             {
                 var today = DateTime.Today;
-                var age = today.Year - Birthday.Year;
-                if (Birthday.Date > today.AddYears(-age)) age--;
+                var age = today.Year - BirthDate.Year;
+                if (BirthDate.Date > today.AddYears(-age)) age--;
                 return age;
             }
         }
 
 
-        public Person(string firstName, string lastName) 
+        public Person(
+            string firstName, 
+            string lastName, 
+            DateTime birthDate = default, 
+            Gender gender = Gender.Unknown
+            )
         {
             FirstName = firstName;
             LastName = lastName;
-        }
-
-        public Person(string firstName, string lastName, DateTime birthday, Gender gender = Gender.Unknown)
-            : this(firstName, lastName)
-        {
-            Birthday = birthday;
             Gender = gender;
+            if (birthDate == default)
+            {
+                BirthDate = DateTime.Today;
+            }
+            else
+            {
+                BirthDate = birthDate;
+            }
         }
 
 
         public override string ToString()
         {
-            return $"{FullName}, {Birthday:dd.MM.yyyy}, age: ({Age}), gender: {Gender}";
+            return $"{FullName}, {BirthDate:dd.MM.yyyy}, age: ({Age}), gender: {Gender}";
         }
 
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Person other) // kontrola ci je objekt null a rovnakeho typu
+            {
+                return false;
+            }
+
+            return FirstName == other.FirstName &&
+                LastName == other.LastName &&
+                BirthDate.Date == other.BirthDate.Date &&
+                Gender == other.Gender;
+        }
+    
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(FirstName, LastName, BirthDate, Gender);
+    }
 
     }
 }
