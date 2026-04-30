@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MojaKniznica/MojaKniznica.csproj" />
+  <Project Path="MojaKonzola/MojaKonzola.csproj" />
+</Solution>
