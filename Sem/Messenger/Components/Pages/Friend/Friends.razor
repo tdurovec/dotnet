@@ -16,6 +16,13 @@
         <div class="col-lg-10">
             <ul class="nav nav-pills mb-4 gap-2">
                 <li class="nav-item">
+                    <a href="/chat" class="nav-link btn-outline-secondary border">
+                        <i class="bi bi-chat-dots-fill me-2"></i> Chat
+                    </a>
+                </li>
+                <div class="vr mx-2"></div>
+
+                <li class="nav-item">
                     <button class="nav-link @(activeTab == FriendsTab.Friends ? "active" : "")"
                             @onclick="() => activeTab = FriendsTab.Friends">
                         <i class="bi bi-people-fill me-2"></i> Friends
@@ -45,7 +52,6 @@
                     case FriendsTab.Friends:
                         <FriendsList Friends="friends" />
                         break;
-
                     case FriendsTab.Requests:
                         <RequestsList Pending="pendingRequests"
                                     Sent="sentRequests"
@@ -53,21 +59,16 @@
                                     OnReject="RejectRequest"
                                     OnCancel="CancelRequest" />
                         break;
-
                     case FriendsTab.Search:
-
                         <SearchUsers Results="searchResults"
                                     OnSearch="SearchUsers"
                                     OnSendRequest="SendRequest" />
-
                         break;
                 }
             </div>
         </div>
     </div>
 </div>
-
-
 
 
 @code {

@@ -1,32 +1,62 @@
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Messenger.Models
+@inject UserManager<User> UserManager
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-1">
-    <div class="container-fluid">
-        <NavLink class="navbar-brand fw-semibold" href="/">
-            ChatApp
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm py-2 bg-white border-bottom">
+    <div class="container-fluid px-4">
+        <NavLink class="navbar-brand fw-bold text-primary d-flex align-items-center gap-2" href="/">
+            <i class="bi bi-chat-fill fs-4"></i>
+            <span>ChatApp</span>
         </NavLink>
 
-        <div class="collapse navbar-collapse" id="navbarMain">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <AuthorizeView>
-                    <Authorized>
-                        <UserMenu />
-                    </Authorized>
+        <div class="d-flex align-items-center">
+            <AuthorizeView>
+                <Authorized>
+                    <div class="d-flex align-items-center border-end pe-3 me-3">
+                        <a href="/profile" class="d-flex align-items-center text-decoration-none hover-row p-1 rounded transition-all">
+                            <img src="@user?.Avatar" class="user-avatar shadow-sm border" alt="Profile" />
+                            <span class="ms-2 fw-medium text-dark d-none d-sm-inline">@context.User.Identity?.Name</span>
+                        </a>
+                    </div>
 
-                    <NotAuthorized>
-                        <li class="nav-item me-2">
-                            <NavLink class="btn btn-secondary btn-sm" href="/account/login">
-                                Login
-                            </NavLink>
-                        </li>
-                        <li class="nav-item">
-                            <NavLink class="btn btn-secondary btn-sm" href="/account/register">
-                                Register
-                            </NavLink>
-                        </li>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </ul>
+                    <div class="d-flex align-items-center gap-2">
+                        <form action="/Account/Logout" method="post" class="ms-2">
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </Authorized>
+
+                <NotAuthorized>
+                    <NavLink class="btn btn-outline-primary btn-sm px-4 me-2 rounded-pill hover-row" href="/account/login">
+                        Login
+                    </NavLink>
+                    <NavLink class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" href="/account/register">
+                        Register
+                    </NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
     </div>
 </nav>
+
+@code {
+    private User? user;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthState != null)
+        {
+            var authState = await AuthState;
+            if (authState.User.Identity?.IsAuthenticated == true)
+            {
+                user = await UserManager.GetUserAsync(authState.User);
+            }
+        }
+    }
+}

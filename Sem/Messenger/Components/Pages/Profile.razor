@@ -1,0 +1,107 @@
+@page "/profile"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@using Messenger.Models
+@using Messenger.Services
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+@inject AccountService AccountService
+@inject IChatService ChatService
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Profile - @user?.UserName</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <!-- HLAVIČKA S AVATAROM -->
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top">
+                    <div class="position-relative d-inline-block">
+                        <img src="@user?.Avatar" class="user-avatar-lg border border-3 border-white shadow mb-2" 
+                             style="width: 120px; height: 120px; object-fit: cover;" alt="Profile Picture" />
+                        
+                        <label class="btn btn-light btn-sm rounded-circle position-absolute bottom-0 end-0 shadow-sm" style="cursor: pointer;">
+                            <i class="bi bi-camera-fill"></i>
+                            <InputFile OnChange="HandleFileSelected" class="d-none" accept="image/*" />
+                        </label>
+                    </div>
+                    <h4 class="mt-2 mb-0">@user?.UserName</h4>
+                    @if (isUploading) { <div class="small opacity-75">Processing image...</div> }
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- ÚPRAVA MENA -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0 rounded-pill-start"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control bg-light border-0 rounded-pill-end" @bind="user!.UserName" />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100 rounded-pill mb-4 shadow-sm" @onclick="UpdateProfile">
+                        Save Profile Changes
+                    </button>
+
+                    <hr class="text-muted opacity-25" />
+
+                    <!-- EXPORT DÁT -->
+                    <div class="mt-4">
+                        <label class="form-label small fw-bold text-muted d-block">Data Management</label>
+                        <p class="small text-muted">Download your chat history as a backup.</p>
+                        <button class="btn btn-outline-dark w-100 rounded-pill">
+                            <i class="bi bi-download me-2"></i> Download Conversations (.txt)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private User? user;
+    private bool isUploading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            user = await UserManager.GetUserAsync(authState.User);
+        }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        if (e.File != null && user != null)
+        {
+            isUploading = true;
+            try 
+            {
+                // Použitie tvojej novej služby
+                user.Avatar = await AccountService.ConvertToBase64Async(e.File);
+            }
+            finally 
+            {
+                isUploading = false;
+            }
+        }
+    }
+
+    private async Task UpdateProfile()
+    {
+        if (user != null)
+        {
+            var result = await UserManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                // Tu môžeš pridať Toast notifikáciu
+            }
+        }
+    }
+
+}
