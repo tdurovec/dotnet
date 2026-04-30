@@ -1,0 +1,110 @@
+@page "/account/login"
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authentication
+@using System.ComponentModel.DataAnnotations
+
+@using Messenger.Services;
+@using Messenger.Schemas;
+
+@attribute [AllowAnonymous]
+
+@inject IAccountService AccountService
+@inject NavigationManager Nav
+
+<PageTitle>Login</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body p-4">
+
+                <h3 class="text-center mb-4">Login</h3>
+
+                <EditForm Model="Input"
+                          OnValidSubmit="OnLogin"
+                          FormName="login">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" />
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            @errorMessage
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <InputText @bind-Value="Input.UserName"
+                                   class="form-control" />
+                        <ValidationMessage For="() => Input.UserName"
+                                           class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <InputText @bind-Value="Input.Password"
+                                   type="password"
+                                   class="form-control" />
+                        <ValidationMessage For="() => Input.Password"
+                                           class="text-danger" />
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <InputCheckbox @bind-Value="Input.RememberMe"
+                                       class="form-check-input" />
+                        <label class="form-check-label">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-secondary w-100">
+                        Log in
+                    </button>
+
+                    <div class="text-center mt-3">
+                        <small>
+                            Don’t have an account?
+                            <a href="/account/register">Register here</a>
+                        </small>
+                    </div>
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginInput Input { get; set; } = default!;
+
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        Input ??= new LoginInput();
+    }
+
+    private async Task OnLogin()
+    {
+        if (Input is null)
+            return;
+
+        var result = await AccountService.LoginAsync(Input);
+
+        if (result.Succeeded)
+        {
+            Nav.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            errorMessage = "Invalid username or password.";
+            Input = new LoginInput();
+        }
+    }
+}

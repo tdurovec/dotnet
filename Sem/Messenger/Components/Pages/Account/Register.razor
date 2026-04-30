@@ -1,0 +1,110 @@
+@page "/account/register"
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+
+@using Messenger.Services;
+@using Messenger.Schemas;
+
+@attribute [AllowAnonymous]
+
+@inject IAccountService AccountService
+@inject NavigationManager Nav
+
+<PageTitle>Register</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body p-4">
+
+                <h3 class="text-center mb-4">Register</h3>
+
+                <EditForm Model="Input"
+                          OnValidSubmit="OnRegister"
+                          FormName="register">
+                    <DataAnnotationsValidator />
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            @errorMessage
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <InputText @bind-Value="Input.UserName"
+                                   class="form-control" />
+                        <ValidationMessage For="() => Input.UserName"
+                                           class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <InputText @bind-Value="Input.Password"
+                                   type="password"
+                                   class="form-control" />
+                        <ValidationMessage For="() => Input.Password"
+                                           class="text-danger" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm password</label>
+                        <InputText @bind-Value="Input.ConfirmPassword"
+                                   type="password"
+                                   class="form-control" />
+                        <ValidationMessage For="() => Input.ConfirmPassword"
+                                           class="text-danger" />
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-secondary w-100">
+                        Register
+                    </button>
+
+                    <div class="text-center mt-3">
+                        <small>
+                            Already have an account?
+                            <a href="/account/login">Login here</a>
+                        </small>
+                    </div>
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private RegisterInput Input { get; set; } = default!;
+
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        Input ??= new RegisterInput();
+    }
+
+    private async Task OnRegister()
+    {
+        if (Input is null)
+            return;
+
+        var result = await AccountService.RegisterAsync(Input);
+
+        if (result.Succeeded)
+        {
+            Nav.NavigateTo("/account/login");
+        }
+        else
+        {
+            errorMessage = string.Join(", ",
+                result.Errors.Select(e => e.Description));
+
+            Input = new RegisterInput();
+        }
+    }
+}

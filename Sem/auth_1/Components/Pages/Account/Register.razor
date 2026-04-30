@@ -1,0 +1,116 @@
+@page "/account/register"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@using auth_1.Schemas.Account
+@inject IAccountService AccountService
+@inject NavigationManager Nav
+
+<PageTitle>Register</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Create an account</h3>
+                
+                <EditForm Model="Input" OnValidSubmit="OnRegister" FormName="register">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" role="alert" />
+
+                    @if (errors is not null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <ul>
+                                @foreach (var error in errors)
+                                {
+                                    <li>@error.Description</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Username (Login)</label>
+                            <InputText @bind-Value="Input.UserName" class="form-control" placeholder="Choose a username" />
+                            <ValidationMessage For="() => Input.UserName" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <InputText @bind-Value="Input.FirstName" class="form-control" />
+                            <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <InputText @bind-Value="Input.LastName" class="form-control" />
+                            <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Birthdate</label>
+                            <InputDate @bind-Value="Input.BirthDate" class="form-control" />
+                            <ValidationMessage For="() => Input.BirthDate" class="text-danger" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Avatar (Optional)</label>
+                            <InputFile OnChange="LoadFile" class="form-control" accept="image/*" />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password</label>
+                            <InputText @bind-Value="Input.Password" type="password" class="form-control" />
+                            <ValidationMessage For="() => Input.Password" class="text-danger" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <InputText @bind-Value="Input.ConfirmPassword" type="password" class="form-control" />
+                            <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-100 btn btn-lg btn-primary mt-3">Register</button>
+                    
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="account/login">Login here</a></p>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private RegisterInput Input { get; set; } = new();
+
+    private IEnumerable<IdentityError>? errors;
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        Input.AvatarFile = e.File;
+    }
+
+    private async Task OnRegister()
+    {
+        var result = await AccountService.RegisterAsync(Input);
+        
+        if (result.Succeeded)
+        {
+            Nav.NavigateTo("account/login");
+        }
+        else
+        {
+            errors = result.Errors;
+        }
+    }
+}

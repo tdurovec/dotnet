@@ -1,0 +1,241 @@
+@page "/friends"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IFriendService FriendService
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager Navigation
+
+<PageTitle>Friends</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Search Users</h5>
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <input @bind="searchQuery" @bind:event="oninput" @onkeyup="HandleKeyUp" 
+                               class="form-control" placeholder="Search by username..." />
+                        <button class="btn btn-outline-primary" @onclick="SearchUsers">Search</button>
+                    </div>
+
+                    <div class="list-group">
+                        @if (searchResults != null)
+                        {
+                            @if (searchResults.Count == 0 && !string.IsNullOrWhiteSpace(searchQuery))
+                            {
+                                <div class="alert alert-info">No users found or request already sent.</div>
+                            }
+                            @foreach (var user in searchResults)
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(user.Avatar))
+                                        {
+                                            <img src="@user.Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar" />
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                                @user.UserName?.FirstOrDefault()
+                                            </div>
+                                        }
+                                        <span>@user.UserName</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-success" @onclick="() => SendRequest(user.Id)">Send Request</button>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Pending Requests</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    @if (pendingRequests != null)
+                    {
+                        @if (pendingRequests.Count == 0)
+                        {
+                            <div class="list-group-item">No pending requests.</div>
+                        }
+                        @foreach (var request in pendingRequests)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(request.Sender?.Avatar))
+                                    {
+                                        <img src="@request.Sender.Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                            @request.Sender?.UserName?.FirstOrDefault()
+                                        </div>
+                                    }
+                                    <span>@request.Sender?.UserName</span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-success me-2" @onclick="() => AcceptRequest(request.Id)">Accept</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => RejectRequest(request.Id)">Reject</button>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Sent Requests</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    @if (sentRequests != null)
+                    {
+                        @if (sentRequests.Count == 0)
+                        {
+                            <div class="list-group-item">No sent requests.</div>
+                        }
+                        @foreach (var request in sentRequests)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(request.Receiver?.Avatar))
+                                    {
+                                        <img src="@request.Receiver.Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                            @request.Receiver?.UserName?.FirstOrDefault()
+                                        </div>
+                                    }
+                                    <span>@request.Receiver?.UserName</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => CancelRequest(request.Id)">Cancel</button>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">My Friends</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    @if (friends != null)
+                    {
+                        @if (friends.Count == 0)
+                        {
+                            <div class="list-group-item">You haven't added any friends yet.</div>
+                        }
+                        @foreach (var friend in friends)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(friend.Avatar))
+                                    {
+                                        <img src="@friend.Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="Avatar" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                            @friend.UserName?.FirstOrDefault()
+                                        </div>
+                                    }
+                                    <span>@friend.UserName</span>
+                                </div>
+                                <button class="btn btn-sm btn-primary" @onclick='() => Navigation.NavigateTo("/chat")'>Chat</button>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string searchQuery = "";
+    private List<ApplicationUser>? searchResults;
+    private List<FriendRequest>? pendingRequests;
+    private List<FriendRequest>? sentRequests;
+    private List<ApplicationUser>? friends;
+    private string? currentUserId;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState != null)
+        {
+            var authState = await AuthState;
+            var user = await UserManager.GetUserAsync(authState.User);
+            currentUserId = user?.Id;
+            await LoadData();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        if (currentUserId != null)
+        {
+            pendingRequests = await FriendService.GetPendingRequestsAsync(currentUserId);
+            sentRequests = await FriendService.GetSentRequestsAsync(currentUserId);
+            friends = await FriendService.GetFriendsAsync(currentUserId);
+        }
+    }
+
+    private async Task SearchUsers()
+    {
+        if (currentUserId != null && !string.IsNullOrWhiteSpace(searchQuery))
+        {
+            searchResults = await FriendService.SearchUsersAsync(currentUserId, searchQuery);
+        }
+    }
+
+    private async Task HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchUsers();
+        }
+    }
+
+    private async Task SendRequest(string receiverId)
+    {
+        if (currentUserId != null)
+        {
+            await FriendService.SendFriendRequestAsync(currentUserId, receiverId);
+            searchResults?.RemoveAll(u => u.Id == receiverId);
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task AcceptRequest(int requestId)
+    {
+        await FriendService.AcceptFriendRequestAsync(requestId);
+        await LoadData();
+    }
+
+    private async Task RejectRequest(int requestId)
+    {
+        await FriendService.RejectFriendRequestAsync(requestId);
+        await LoadData();
+    }
+
+    private async Task CancelRequest(int requestId)
+    {
+        await FriendService.CancelFriendRequestAsync(requestId);
+        await LoadData();
+    }
+}

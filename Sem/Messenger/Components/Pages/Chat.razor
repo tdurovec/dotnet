@@ -1,0 +1,181 @@
+@page "/chat"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@implements IDisposable
+
+@using Messenger.Services
+@using Messenger.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@inject IChatService ChatService
+@inject ChatNotificationService NotificationService
+@inject UserManager<User> UserManager
+@inject IFriendService FriendService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Chat</PageTitle>
+
+<div class="container-fluid messenger-height border mt-2 shadow-sm bg-white p-0">
+    <div class="row g-0 h-100">
+        <!-- ZOZNAM PRIATEĽOV (Kód zostáva rovnaký) -->
+        <div class="col-md-4 col-lg-3 d-flex flex-column border-end bg-light">
+            <div class="p-3 border-bottom bg-white">
+                <h5 class="m-0 fw-bold">Chats</h5>
+            </div>
+            <div class="list-group list-group-flush scrollable-area">
+                @if (users != null)
+                {
+                    @foreach (var user in users.Where(u => u.Id != currentUserId))
+                    {
+                        var unreadCount = unreadCounts?.GetValueOrDefault(user.Id) ?? 0;
+                        <button class="list-group-item list-group-item-action d-flex align-items-center border-0 py-3 @(selectedUser?.Id == user.Id ? "active" : "")"
+                                @onclick="() => SelectUser(user)">
+                            <img src="@user.Avatar" class="user-avatar-lg me-3" />
+                            <div class="flex-grow-1 overflow-hidden text-start">
+                                <span class="fw-semibold">@user.UserName</span>
+                                @if (unreadCount > 0)
+                                {
+                                    <span class="badge rounded-pill bg-primary float-end">@unreadCount</span>
+                                }
+                            </div>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- CHAT OKNO (Kód zostáva rovnaký) -->
+        <div class="col-md-8 col-lg-9 d-flex flex-column bg-white">
+            @if (selectedUser != null)
+            {
+                <div class="p-3 border-bottom d-flex align-items-center">
+                    <img src="@selectedUser.Avatar" class="user-avatar me-2" />
+                    <strong class="fs-5">@selectedUser.UserName</strong>
+                </div>
+                <div class="scrollable-area p-3 d-flex flex-column">
+                    @if (messages != null)
+                    {
+                        @foreach (var msg in messages)
+                        {
+                            var isMe = msg.SenderId == currentUserId;
+                            <div class="chat-bubble @(isMe ? "bubble-me" : "bubble-other")">
+                                <div>@msg.Message</div>
+                                <small class="d-block opacity-75 mt-1 @(isMe ? "text-end" : "")" style="font-size: 0.65rem;">
+                                    @msg.Timestamp.ToLocalTime().ToString("HH:mm")
+                                </small>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="p-3 border-top bg-light">
+                    <div class="input-group">
+                        <input class="form-control rounded-pill me-2" placeholder="Aa" @bind="newMessage" @bind:event="oninput" @onkeyup="HandleKeyUp" />
+                        <button class="btn btn-primary rounded-pill px-4" @onclick="SendMessage" disabled="@string.IsNullOrWhiteSpace(newMessage)">Send</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<User>? users;
+    private User? selectedUser;
+    private List<ChatMessage>? messages;
+    private Dictionary<string, int>? unreadCounts;
+    private string? currentUserId;
+    private string? newMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        // Prihlásenie na odber notifikácií
+        NotificationService.OnMessageReceived += HandleMessageReceived;
+    }
+
+    private async void HandleMessageReceived(string receiverId, string senderId)
+    {
+        // Správu spracujeme len ak je určená pre nás[cite: 13]
+        if (receiverId == currentUserId)
+        {
+            await InvokeAsync(async () =>
+            {
+                if (selectedUser != null && senderId == selectedUser.Id)
+                {
+                    // Ak máme otvorené okno s odosielateľom, načítame históriu[cite: 13]
+                    messages = await ChatService.GetChatHistoryAsync(currentUserId, selectedUser.Id);
+                    await ChatService.MarkAsReadAsync(currentUserId, selectedUser.Id);
+                }
+                else
+                {
+                    // Inak len aktualizujeme počty neprečítaných správ[cite: 13]
+                    unreadCounts = await ChatService.GetUnreadCountsAsync(currentUserId);
+                }
+                StateHasChanged();
+            });
+        }
+    }
+
+    private async Task LoadData()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            currentUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(currentUserId))
+            {
+                users = await FriendService.GetFriendsAsync(currentUserId);
+                unreadCounts = await ChatService.GetUnreadCountsAsync(currentUserId);
+            }
+        }
+    }
+
+    private async Task SelectUser(User user)
+    {
+        selectedUser = user;
+        if (currentUserId != null)
+        {
+            await ChatService.MarkAsReadAsync(currentUserId, user.Id);
+            unreadCounts = await ChatService.GetUnreadCountsAsync(currentUserId);
+            messages = await ChatService.GetChatHistoryAsync(currentUserId, user.Id);
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(newMessage) || selectedUser == null || currentUserId == null) return;
+
+        var text = newMessage;
+        newMessage = string.Empty;
+
+        var savedMsg = new ChatMessage {
+            SenderId = currentUserId,
+            ReceiverId = selectedUser.Id,
+            Message = text,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        await ChatService.SaveMessageAsync(savedMsg);
+        
+        // KĽÚČOVÁ ZMENA: Notifikujeme Singleton službu[cite: 13]
+        NotificationService.NotifyMessage(selectedUser.Id, currentUserId);
+
+        // Aktualizujeme vlastné okno
+        messages = await ChatService.GetChatHistoryAsync(currentUserId, selectedUser.Id);
+        StateHasChanged();
+    }
+
+    private async Task HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await SendMessage();
+    } 
+
+    public void Dispose()
+    {
+        // Dôležité: Odhlásenie z udalosti, aby sme predišli memory leakom[cite: 13]
+        NotificationService.OnMessageReceived -= HandleMessageReceived;
+    }
+}

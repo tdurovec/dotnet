@@ -1,0 +1,154 @@
+@page "/friends"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@using Messenger.Models
+@using Messenger.Services
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IFriendService FriendService
+@inject UserManager<User> UserManager
+
+
+<PageTitle>Friends</PageTitle>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <ul class="nav nav-pills mb-4 gap-2">
+                <li class="nav-item">
+                    <button class="nav-link @(activeTab == FriendsTab.Friends ? "active" : "")"
+                            @onclick="() => activeTab = FriendsTab.Friends">
+                        <i class="bi bi-people-fill me-2"></i> Friends
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link @(activeTab == FriendsTab.Requests ? "active" : "")"
+                            @onclick="() => activeTab = FriendsTab.Requests">
+                        <i class="bi bi-person-plus me-2"></i> Requests
+                        @if ((pendingRequests?.Count ?? 0) > 0)
+                        {
+                            <span class="badge bg-danger ms-2">@pendingRequests!.Count</span>
+                        }
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link @(activeTab == FriendsTab.Search ? "active" : "")"
+                            @onclick="() => activeTab = FriendsTab.Search">
+                        <i class="bi bi-search me-2"></i> Search
+                    </button>
+                </li>
+            </ul>
+
+            <div class="py-">
+                @switch (activeTab)
+                {
+                    case FriendsTab.Friends:
+                        <FriendsList Friends="friends" />
+                        break;
+
+                    case FriendsTab.Requests:
+                        <RequestsList Pending="pendingRequests"
+                                    Sent="sentRequests"
+                                    OnAccept="AcceptRequest"
+                                    OnReject="RejectRequest"
+                                    OnCancel="CancelRequest" />
+                        break;
+
+                    case FriendsTab.Search:
+
+                        <SearchUsers Results="searchResults"
+                                    OnSearch="SearchUsers"
+                                    OnSendRequest="SendRequest" />
+
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+    private enum FriendsTab
+    {
+        Friends,
+        Requests,
+        Search
+    }
+
+    private FriendsTab activeTab = FriendsTab.Friends;
+
+    private List<User>? searchResults;
+    private List<FriendRequest>? pendingRequests;
+    private List<FriendRequest>? sentRequests;
+    private List<User>? friends;
+    private string? currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var principal = authState.User;
+
+        if (!principal.Identity!.IsAuthenticated)
+            return;
+
+        var user = await UserManager.GetUserAsync(principal);
+        currentUserId = user?.Id;
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        if (currentUserId is null)
+            return;
+
+        pendingRequests = await FriendService.GetPendingRequestsAsync(currentUserId);
+        sentRequests = await FriendService.GetSentRequestsAsync(currentUserId);
+        friends = await FriendService.GetFriendsAsync(currentUserId);
+    }
+
+    private async Task SearchUsers(string searchQuery)
+    {
+        Console.WriteLine($"this is current id ->{currentUserId}");
+        Console.WriteLine($"search query ->{searchQuery}");
+        if (string.IsNullOrWhiteSpace(searchQuery) || currentUserId is null)
+        {
+            searchResults = null;
+            return;
+        }
+
+        searchResults = await FriendService.SearchUsersAsync(currentUserId, searchQuery);
+    }
+
+    private async Task SendRequest(string receiverId)
+    {
+        if (currentUserId is null)
+            return;
+
+        await FriendService.SendFriendRequestAsync(currentUserId, receiverId);
+
+        activeTab = FriendsTab.Requests;
+        await LoadData();
+    }
+
+    private async Task AcceptRequest(int requestId)
+    {
+        await FriendService.AcceptFriendRequestAsync(requestId);
+        await LoadData();
+    }
+
+    private async Task RejectRequest(int requestId)
+    {
+        await FriendService.RejectFriendRequestAsync(requestId);
+        await LoadData();
+    }
+
+    private async Task CancelRequest(int requestId)
+    {
+        await FriendService.CancelFriendRequestAsync(requestId);
+        await LoadData();
+    }
+}
