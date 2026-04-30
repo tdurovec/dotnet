@@ -1,0 +1,146 @@
+@page "/account/profile"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@using auth_1.Models
+@using auth_1.Schemas.Account
+@inject UserManager<ApplicationUser> UserManager
+@inject IAccountService AccountService
+@inject NavigationManager Nav
+
+<PageTitle>Profile</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Personal Information</h3>
+
+                @if (successMessage != null)
+                {
+                    <div class="alert alert-success" role="alert">@successMessage</div>
+                }
+                @if (errorMessage != null)
+                {
+                    <div class="alert alert-danger" role="alert">@errorMessage</div>
+                }
+
+                <div class="text-center mb-4">
+                    @if (!string.IsNullOrEmpty(user?.Avatar))
+                    {
+                        <img src="@user.Avatar" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" alt="Avatar" />
+                    }
+                    else
+                    {
+                        <div class="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px; font-size: 3rem;">
+                            @user?.UserName?.FirstOrDefault()
+                        </div>
+                    }
+                </div>
+
+                <EditForm Model="Input" OnValidSubmit="OnSaveProfile" FormName="profile">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" role="alert" />
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Change Avatar</label>
+                            <InputFile OnChange="LoadFile" class="form-control" accept="image/*" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <InputText @bind-Value="Input.FirstName" class="form-control" />
+                            <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <InputText @bind-Value="Input.LastName" class="form-control" />
+                            <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Birthdate</label>
+                        <InputDate @bind-Value="Input.BirthDate" class="form-control" />
+                        <ValidationMessage For="() => Input.BirthDate" class="text-danger" />
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        <InputCheckbox @bind-Value="Input.HidePersonalInformation" class="form-check-input" id="privacyToggle" />
+                        <label class="form-check-label" for="privacyToggle">Hide personal information from others</label>
+                    </div>
+
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Save Changes</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ProfileInput Input { get; set; } = new();
+
+    private string? successMessage;
+    private string? errorMessage;
+    private ApplicationUser? user;
+    private IBrowserFile? avatarFile;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState != null)
+        {
+            var authState = await AuthState;
+            user = await UserManager.GetUserAsync(authState.User);
+
+            if (user != null)
+            {
+                Input.FirstName = user.FirstName;
+                Input.LastName = user.LastName;
+                Input.BirthDate = user.BirthDate;
+                Input.HidePersonalInformation = user.HidePersonalInformation;
+            }
+        }
+    }
+
+    private void LoadFile(InputFileChangeEventArgs e)
+    {
+        avatarFile = e.File;
+    }
+
+    private async Task OnSaveProfile()
+    {
+        successMessage = null;
+        errorMessage = null;
+
+        if (user != null)
+        {
+            if (avatarFile != null)
+            {
+                user.Avatar = await AccountService.UploadAvatarAsync(avatarFile);
+            }
+
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+            user.BirthDate = Input.BirthDate;
+            user.HidePersonalInformation = Input.HidePersonalInformation;
+
+            var result = await UserManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                successMessage = "Profile updated successfully!";
+            }
+            else
+            {
+                errorMessage = "Error updating profile: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+        }
+    }
+}

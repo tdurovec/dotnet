@@ -1,0 +1,81 @@
+@page "/account/login"
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using auth_1.Schemas.Account
+@inject IAccountService AccountService
+@inject NavigationManager Nav
+@inject IHttpContextAccessor HttpContextAccessor
+
+<PageTitle>Login</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Login</h3>
+                
+                <EditForm Model="Input" OnValidSubmit="OnLogin" FormName="login" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" role="alert" />
+
+                    @if (errorMessage is not null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @errorMessage
+                        </div>
+                    }
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.UserName" class="form-control" />
+                        <label>Username</label>
+                        <ValidationMessage For="() => Input.UserName" class="text-danger" />
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.Password" type="password" class="form-control"/>
+                        <label>Password</label>
+                        <ValidationMessage For="() => Input.Password" class="text-danger" />
+                    </div>
+
+                    <div class="checkbox mb-3">
+                        <label class="form-label">
+                            <InputCheckbox @bind-Value="Input.RememberMe" class="form-check-input" />
+                            Remember me
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="account/register">Register here</a></p>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginInput Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? errorMessage;
+
+    private async Task OnLogin()
+    {
+        var result = await AccountService.LoginAsync(Input);
+        
+        if (result.Succeeded)
+        {
+            Nav.NavigateTo(ReturnUrl ?? "/", forceLoad: true);
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+}

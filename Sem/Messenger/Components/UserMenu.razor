@@ -1,0 +1,40 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+
+@using Messenger.Models;
+@inject UserManager<User> UserManager
+
+@if (user is not null)
+{
+    <li class="nav-item me-3 d-flex align-items-center text-light small">
+        <img src="@user.Avatar"
+             alt="Avatar"
+             class="user-avatar me-2" />
+
+        <span>@user.UserName</span>
+    </li>
+
+    <li class="nav-item">
+        <form action="/Account/Logout" method="post">
+            <button class="btn btn-secondary btn-sm">
+                Logout
+            </button>
+        </form>
+    </li>
+}
+
+@code {
+    private User? user;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState is null)
+            return;
+
+        var authState = await AuthState;
+        user = await UserManager.GetUserAsync(authState.User);
+    }
+}

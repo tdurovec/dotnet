@@ -1,0 +1,64 @@
+@using Messenger.Models
+
+<div class="border-bottom mb-3 pb-2">
+    <h5 class="mb-0">Search Users</h5>
+</div>
+
+<div class="input-group input-group-sm mb-3">
+    <input class="form-control"
+           placeholder="Search by username..."
+           @bind="SearchQuery"/>
+
+    <button class="btn btn-secondary"
+            @onclick="OnSearchClicked"
+            disabled="@string.IsNullOrWhiteSpace(SearchQuery)">
+        <i class="bi bi-search"></i>
+    </button>
+</div>
+
+
+@if (Results == null || Results.Count == 0)
+{
+    <div class="text-muted fst-italic small">No users found.</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var user in Results)
+        {
+
+            <div class="d-flex align-items-center justify-content-between px-2 py-2 rounded-3 hover-row">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="@user.Avatar" class="user-avatar" alt="Avatar" />
+                    <span>@user.UserName</span>
+                </div>
+                <button class="btn btn-success btn-xs" @onclick="() => OnSendRequest.InvokeAsync(user.Id)">+</button>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    /* SEARCH INPUT */
+    [Parameter]
+    public string SearchQuery { get; set; } = string.Empty;
+
+    /* SEARCH RESULTS */
+    [Parameter]
+    public List<User>? Results { get; set; }
+
+    /* EVENTS */
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSendRequest { get; set; }
+
+    private async Task OnSearchClicked()
+    {
+        Console.WriteLine($"query --> {SearchQuery}");
+        await OnSearch.InvokeAsync(SearchQuery);
+    }
+
+
+}
